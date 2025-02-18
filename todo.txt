@@ -1,0 +1,120 @@
+
+employee based menus(GET Mapping) empId:input, based on employee role mapping
+emp_roles,
+emp_role_menu_mapping:--action id;--dms_action_table (Menu_id(output))--> response id based on org_id
+emp_menu_mapping
+
+
+GET API we need to write here based on three tables (emp_id is the input request header, organization_id):
+1.dms_employee_role_mapping(emp_id)
+Table: dms_employee_role_mapping
+Columns:
+id int AI PK 
+emp_id int 
+role_id int 
+organization_id int 
+branch_id int 
+active tinyint(1) 
+created_date date
+created_by varchar(150) 
+updated_by varchar(150) 
+updated_date date 
+department_id int 
+leads int 
+max_target int 
+dmslead_count int 
+created_by_id int
+
+
+2.dms_role_menu_mapping(role_id, action_id)
+
+Table: dms_role_menu_mapping
+Columns:
+id int AI PK 
+menu_id int 
+role_id int 
+organization_id int 
+branch_id int 
+action_id int 
+created_by varchar(50) 
+updated_by varchar(50)
+
+
+3.dms_action(menu_ids)
+Table: dms_role_menu_mapping
+Columns:
+id int AI PK 
+menu_id int 
+role_id int 
+organization_id int 
+branch_id int 
+action_id int 
+created_by varchar(50) 
+updated_by varchar(50)
+
+4.Table: dms_menu
+Columns:
+menu_id int AI PK 
+description varchar(100) 
+display_name varchar(50) 
+menu_name varchar(500) 
+menu_type varchar(100) 
+parent_menu varchar(100) 
+api_url varchar(150) 
+editapi_url varchar(150) 
+branch_id int 
+organization_id int 
+position int 
+icon varchar(125) 
+active tinyint(1) 
+created_by varchar(50) 
+updated_by varchar(50) 
+menu_type_id int
+
+5.Table: dms_action
+Columns:
+action_id int AI PK 
+description varchar(100) 
+display_name varchar(50) 
+api_url varchar(150) 
+action_name varchar(50) 
+organization_id int 
+branch_id int 
+render_type varchar(50) 
+menu_id int 
+editapi_url varchar(150) 
+active tinyint(1) 
+created_by varchar(50) 
+updated_by varchar(50)
+
+Problem statement
+first take emp_id from input then check in dms_employee_role_mapping table and get role_id,
+with that role_id check in dms_role_menu_mapping table and get the menu_ids,(Menu ids are getting NULL)
+with that menu_id check in dms_action table get the menu_ids 
+and finaly get the menu data from dms_menu table and action_data from dms_action table with that gotten menu_id and gotten action_id
+
+want response as JSON:
+{
+menudata:
+{
+actiondata:
+}
+}
+
+
+
+
+
+
+
+SELECT 
+    derm.emp_id,
+    derm.role_id,
+    drmm.menu_id,
+    drmm.action_id
+FROM salesDataSetup.dms_employee_role_mapping derm
+JOIN salesDataSetup.dms_role_menu_mapping drmm ON derm.role_id = drmm.role_id
+JOIN salesDataSetup.dms_action da ON drmm.action_id = da.action_id
+JOIN salesDataSetup.dms_menu dm ON da.menu_id = dm.menu_id
+WHERE derm.emp_id =1;
+
